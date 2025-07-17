@@ -1,0 +1,169 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing:  content-box;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url("./fonts/Roboto-Regular.ttf");
+}
+@font-face {
+    font-family: 'Norse';
+    src: url("./fonts/Norse-Bold.otf");
+}
+html,body{
+    font-family: 'Roboto';
+    gap: 2rem;
+    background-color:aliceblue;
+}
+:root{
+    --palette-1 : rgb(25, 0, 63);
+}
+.flexRow{
+    display: flex;
+    flex-direction: row;
+}
+.flexColumn{
+    display: flex;
+    flex-direction: column;
+}
+header,main{
+    padding:1.5rem;
+}
+a,button{
+    cursor: pointer;
+}
+img[src$=".svg"]{
+    width: 10rem;
+}
+.overlay{
+    background-color: rgba(0, 0, 0, 0.858);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+/*HEADER */
+header{
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+    color:white;
+    background-color: var(--palette-1);
+    box-shadow: 0px 5px 20px 3px rgba(0,0,0,0.75);
+    font-weight: bold;
+}
+header h1{
+    font-family: 'Norse';
+    font-size: 4rem;
+}
+/*MAIN */
+main{
+    gap:2rem;
+}
+.librarySettings{
+    justify-content: center;
+    align-items: center;
+    gap:3rem;
+}
+.librarySetttingsOptions{
+    width: 100%;
+    justify-content: center;
+    gap:3rem;
+}
+.librarySetttingsOptions > button{
+    font-size: 1rem;
+    background-color: var(--palette-1);
+    color:white;
+    transition: 0.4s;
+    border:none;
+    font-family: 'Roboto';
+    font-weight: bold;
+    padding:1rem 2rem;
+    box-shadow: 3px 3px 5px 3px rgba(0,0,0,0.75);
+    border-radius: 0.5rem;
+}
+.librarySetttingsOptions > button:hover,
+.librarySetttingsOptions > button:active{
+    background-color: rgb(56, 6, 132);
+
+}
+.formContainer{
+    background-color: white;
+    flex-wrap : wrap;
+    padding:3rem;
+    position: fixed;
+        top: 5%;
+        left: 20%;
+    z-index: 2;
+    width: 50%;
+    border-radius: 0.5rem;
+}
+.formContainer > fieldset{
+    padding:1rem;
+    gap:1.5rem;
+    border: none;
+}
+
+.formContainer > fieldset > legend{
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.inputContainer{
+    gap: 0.5rem;
+    
+}
+.inputContainer > input[type="text"]{
+    padding:0.5rem;
+    width: 90%;
+    border: 1px solid gray;
+    border-radius: 0.5rem;
+}
+.readOrNotContainer{
+    gap:1rem;
+}
+.formContainer button{
+    padding:1rem 2rem;
+    background-color: gold;
+    font-size: 1.2rem;
+    font-weight: bold;
+    align-self: center;
+    justify-self: center;
+    color:white;
+    border-radius: 0.5rem;
+    border: none;
+}
+select, option{
+    padding:0.6rem;
+}
+.libraryBooks{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    border: 1rem solid brown;
+    outline:3px solid black;
+    height: 30vh;
+    padding: 0rem 0rem; /*change this later*/
+    background: linear-gradient(180deg, rgb(93, 20, 20), rgb(57, 11, 11));
+    justify-content: flex-end;
+    align-items: center;
+}
+.libraryBookStyle{
+    height: 95%;
+    border: 5px solid black;
+    width: 2rem;
+}
+.changeBookReadOrNotContainer{
+    gap:1rem;
+}
+/*FOOTER */
+footer{
+    font-weight: bold;
+    padding:1.5rem;
+    justify-content: center;
+    align-items: center;
+    color:white;
+    background-color: var(--palette-1);
+}
