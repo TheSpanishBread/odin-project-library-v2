@@ -1,331 +1,250 @@
-(function ini(){
-    //VARIABLES
-
-    const addBook = document.querySelector("#addBook");
-    const removeBook = document.querySelector("#removeBook");
-    const changeBook = document.querySelector("#changeBook");
-    const body = document.querySelector("body");
-    let libraryBook = [];
-    const libraryBooks = document.querySelector("#libraryBooks");
-    //EVENTS
-        //Create Form
-    addBook.addEventListener("click", () => {
-        overlay();
-        createForm("Title", "Author", "Pages" , "Read");
-    });
-        //Delete Book
-    removeBook.addEventListener("click", () =>{
-        overlay();
-        removeBookForm();
-    });
-        //Change Book Details
-    changeBook.addEventListener("click", ()=>{
-        overlay();
-        changeBookForm();
-    });
-
-
-
-    //FUNCTIONS
-    function changeBookForm(){
-        //form container
-        let formContainer = document.createElement("form");
-        formContainer.id = "formContainer";
-        formContainer.classList.add("flexColumn", "formContainer");
-        //form fielset
-        let formContainerFieldset = document.createElement("fieldset");
-        formContainerFieldset.classList.add("flexColumn", "formContainerFieldset");
-        //form legend
-        let formContainerLegend = document.createElement("legend");
-        formContainerLegend.textContent = "Change Book";
-        formContainerFieldset.appendChild(formContainerLegend);
-        //label element
-        let label = document.createElement("label")
-        label.textContent = "Select a book to change";
-        formContainerFieldset.appendChild(label);
-        //create select element
-        let select = document.createElement("select");
-        select.classList.add("inputSelect");
-        select.name = "changeBook";
-        //default value
-        let optionDefault = document.createElement("option");
-        optionDefault.textContent = "Select a book from the list";
-        optionDefault.selected = true;
-        optionDefault.disabled = true;
-        select.appendChild(optionDefault);
-        // loop through array of books
-        libraryBook.forEach(book => {
-            let option = document.createElement("option");
-            option.value = book.id;
-            option.textContent = book.name + ", by " + book.author; 
-            select.appendChild(option);
-        });
-        //button
-        let changeFormSubmit = document.createElement("button");
-        changeFormSubmit.id  = "submitButton";
-        changeFormSubmit.textContent = "Submit";
-
-        formContainerFieldset.appendChild(select);
-        formContainer.appendChild(formContainerFieldset);
-        body.appendChild(formContainer);
-        //Temporary Events
-        select.addEventListener("change", ()=>{
-            let resetThis = document.querySelectorAll(".resetThis");
-            if (resetThis){
-                resetThis.forEach(element => {
-                    formContainerFieldset.removeChild(element);         
-                });
-            }
-            
-            let selectedBook = libraryBook.filter((book) => book.id == select.value);
-            let bookReadorNot = document.createElement("label");
-            bookReadorNot.htmlFor = "bookReadorNot";
-            bookReadorNot.textContent = "Has " + selectedBook[0].name
-                             + " been read?";
-            bookReadorNot.classList.add("resetThis");
-            let bookReadorNotContainer = document.createElement("div");
-            bookReadorNotContainer.classList.add ("flexRow", "resetThis", "changeBookReadOrNotContainer");
-
-            let inputYesLabel = document.createElement("label");
-            inputYesLabel.textContent = "Yes";
-            let inputYes = document.createElement("input");
-            inputYes.type= "radio";
-            inputYes.name = "readOrNot";
-            inputYes.value = "true";
-
-            let inputNoLabel = document.createElement("label");
-            inputNoLabel.textContent = "No";
-            let inputNo = document.createElement("input");
-            inputNo.type= "radio";
-            inputNo.name = "readOrNot";
-            inputNo.value = "false";
-
-            if (selectedBook[0].read == "true"){
-                 inputYes.checked = true;
-            }else{
-                inputNo.checked = true;
-            }
-
-
-            formContainerFieldset.appendChild(bookReadorNot);
-
-            bookReadorNotContainer.appendChild(inputYesLabel);
-            bookReadorNotContainer.appendChild(inputYes);
-            bookReadorNotContainer.appendChild(inputNoLabel);
-            bookReadorNotContainer.appendChild(inputNo);    
-            formContainerFieldset.appendChild(bookReadorNotContainer);
-
-            formContainerFieldset.appendChild(changeFormSubmit);
-
-            //if butt
-            changeFormSubmit.addEventListener("click", (e)=>{
-                e.preventDefault();
-                let overlay = document.querySelector("#overlay");
-                let formContainer = document.querySelector("#formContainer")
-                
-                let newSelect = document.querySelector("input[name='readOrNot']:checked");
-                let index = libraryBook.findIndex(book => book.id === select.value);
-                libraryBook[index].read = newSelect.value;
-                
-
-                console.log(libraryBook);
-                body.removeChild(overlay);
-                body.removeChild(formContainer);
-            });
-        });
-
+(() => {
+    const DOMVariables = { 
+        body : document.querySelector("body"),
+        libraryBooks : document.querySelector("#libraryBooks"),
+        addBook : document.querySelector("#addBook"),
+        removeBook : document.querySelector("#removeBook"),
+        changeBook : document.querySelector("#changeBook"),
     }
-    function removeBookForm(){
-        //form Container
+    const libraryVariables = {
+        libraryBook : [],
+    }
+    const UIMethods = {
+        overlay(){
+            let overlay = document.createElement("div");
+            overlay.classList.add("overlay");
+            overlay.id = "overlay";
+            DOMVariables.body.appendChild(overlay);
+        },
+        removeFormOverlay(){
+            DOMVariables.body.removeChild(document.querySelector("#formContainer"));
+            DOMVariables.body.removeChild(document.querySelector("#overlay"));
+        },
+        bookToShelft(newBook){
+            let libraryBookStyle  = document.createElement("div");
+            libraryBookStyle.dataset.id = newBook.id;
+            libraryBookStyle.classList.add("libraryBookStyle");
+            libraryBookStyle.style.backgroundColor = "rgb(" + Math.floor(Math.random() * 256) + 
+            "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")";
+            DOMVariables.libraryBooks.appendChild(libraryBookStyle);  
+        },
+        bookHoverUI(bookDetails, bookDiv, id){
+            let hoverContainer = document.createElement("div");
+            hoverContainer.classList.add("hoverContainer", "flexColumn");
+            hoverContainer.id = "details"+id;
+            
+            for(let i = 0; i<=4;i++){
+                let hoverEntry = document.createElement("p");
+                hoverEntry.textContent = bookDetails[i];
+                hoverContainer.appendChild(hoverEntry);
+            }
+            bookDiv.appendChild(hoverContainer);
+        },
+        removeBook(){
+            let book = document.querySelector("select[name='removeBook']").value;
+            let booktoRemove = document.querySelector("[data-id='" + book + "']");
+            DOMVariables.libraryBooks.removeChild(booktoRemove);
+
+        }
+    }
+    const formMethods = {
+        createForm(promptMessage){
             let formContainer = document.createElement("form");
             formContainer.id = "formContainer";
             formContainer.classList.add("flexColumn", "formContainer");
 
             let formContainerFieldset = document.createElement("fieldset");
             formContainerFieldset.classList.add("flexColumn", "formContainerFieldset");
+            formContainerFieldset.id = "formContainerFieldset"
 
             let formContainerLegend = document.createElement("legend");
-            formContainerLegend.textContent = "Remove Book";
+            formContainerLegend.textContent = promptMessage;
 
-            formContainerFieldset.appendChild(formContainerLegend);
-            let label = document.createElement("label")
-            label.textContent = "Select a book to remove";
-            formContainerFieldset.appendChild(label);
+            formContainerFieldset.appendChild(formContainerLegend); 
+            formContainer.appendChild(formContainerFieldset);
+            DOMVariables.body.appendChild(formContainer);
+        },
+        submitButton(){
+            let submitForm = document.createElement("button");
+            submitForm.id  = "submitButton";
+            submitForm.textContent = "Submit";
+            document.querySelector("#formContainerFieldset").appendChild(submitForm);
 
-            let inputSelect = document.createElement("select");
-            inputSelect.classList.add("inputSelect");
-            inputSelect.name = "removeBook";
+        },
+        createFormItems(array){
+            for(let i=0 ; i <=((array.length)-1); i++){
+                let inputContainer = document.createElement("div");
+                inputContainer.classList.add("flexColumn", "inputContainer") 
+                document.querySelector("#formContainerFieldset").appendChild(inputContainer); 
+
+                let label = document.createElement("label");
+                label.textContent = "Book " + array[i];
+                label.htmlFor = "book"+array[i];
+                inputContainer.appendChild(label); 
+
+                let input = document.createElement("input");
+                input.type = "text";
+                input.id = "book" + array[i];
+                input.placeholder  = "Enter book " + array[i] + " ...";
+                input.classList.add("bookNewInput");
+                inputContainer.appendChild(input); 
+            }
+        },
+        createRadioItems(promptMessage, array){
+            let inputContainer = document.createElement("div");
+            inputContainer.classList.add("flexRow", "readOrNotContainer");            
+            document.querySelector("#formContainerFieldset").appendChild(inputContainer); 
+
+            let label = document.createElement("label");
+            label.textContent = promptMessage;
+            inputContainer.appendChild(label);
+
+            for(let i = 0 ; i <=(array.length-1) ; i++){
+                let input = document.createElement("input");
+                input.type = "radio";
+                input.id = "read" + array[i];
+                input.name = "readOrNot";
+                input.value = array[i];
+                inputContainer.appendChild(input);
+
+                let label = document.createElement("label");
+                label.htmlFor = "read" + array[i];
+                if (array[i] == "true"){
+                    label.textContent = "Yes";
+                }else{
+                    label.textContent = "No";
+                }
+                inputContainer.appendChild(label);
+            }
             
+        },
+        createSelect(name){
+            let select = document.createElement("select");
+            select.name = name;
+            document.querySelector("#formContainerFieldset").appendChild(select); 
             let optionDefault = document.createElement("option");
             optionDefault.textContent = "Select a book from the list";
             optionDefault.selected = true;
             optionDefault.disabled = true;
-            inputSelect.appendChild(optionDefault);
-        //add to loop through the array;
-            libraryBook.forEach(book => {
+            optionDefault.value = "";
+            select.appendChild(optionDefault);
+            libraryVariables.libraryBook.forEach(book => {
                 let option = document.createElement("option");
                 option.value = book.id;
-                option.textContent = book.name + ", by " + book.author; 
-                inputSelect.appendChild(option);
+                option.textContent = book.title + ", by " + book.author; 
+                select.appendChild(option);
             });
-        //button
-            let removeFormSubmit = document.createElement("button");
-            removeFormSubmit.id  = "submitButton";
-            removeFormSubmit.textContent = "Submit";
-
-        //append
-            formContainerFieldset.appendChild(inputSelect);
-            formContainerFieldset.appendChild(removeFormSubmit);
-            formContainer.appendChild(formContainerFieldset);
-            body.appendChild(formContainer);
-        //Temporary Events
-            removeFormSubmit.addEventListener("click", (e)=>{
-                e.preventDefault();
-                let overlay = document.querySelector("#overlay");
-                let formContainer = document.querySelector("#formContainer")
-                //start removingher
-
-                libraryBook = libraryBook.filter((book) => book.id !== inputSelect.value);
-                let removeBookfromCase = document.querySelectorAll(".libraryBookStyle");
-                removeBookfromCase.forEach(individualBook => {
-                    if (individualBook.dataset.id == inputSelect.value){
-                        libraryBooks.removeChild(individualBook);
-                    }
-                });
-
-                console.log(libraryBook);
-                body.removeChild(overlay);
-                body.removeChild(formContainer);
-            });
-    }
-    function overlay(){
-        let overlay = document.createElement("div");
-        overlay.classList.add("overlay");
-        overlay.id = "overlay";
-        body.appendChild(overlay);
-    }
-
-    function createForm(...array){
-        //START
-        //1. form Container
-            let formContainer = document.createElement("form");
-            formContainer.id = "formContainer";
-            formContainer.classList.add("flexColumn", "formContainer");
-
-            let formContainerFieldset = document.createElement("fieldset");
-            formContainerFieldset.classList.add("flexColumn", "formContainerFieldset");
-
-            let formContainerLegend = document.createElement("legend");
-            formContainerLegend.textContent = "Enter Book Details";
-
-            formContainerFieldset.appendChild(formContainerLegend);
-        //2. form fields 
-        for (let i = 0; i<=3 ;i++){
-            let inputContainer = document.createElement("div");
-            inputContainer.classList.add("flexColumn", "inputContainer") 
-
-            let label = document.createElement("label");
-            label.htmlFor = "book" + array[i];
-            label.textContent = "Book " + array[i] + " :";
-
-            let input = document.createElement("input");
-            
-
-            input.classList.add("bookNewInput");
-            if (i!=3){
-            input.type = "text";
-            input.placeholder = "Enter Book " + array[i] + "...";
-            input.id = "book" + array[i];
-            input.required = true;
-
-            inputContainer.appendChild(label);
-            inputContainer.appendChild(input);
-            formContainerFieldset.appendChild(inputContainer);
+        },
+        deleteBook(){
+            let index = libraryVariables.libraryBook.findIndex(obj => obj.id === 
+                document.querySelector("select[name='removeBook']").value
+            );
+            if (index !== -1){
+                libraryVariables.libraryBook.splice(index,1);
+                console.log(libraryVariables.libraryBook);
             }
-            else{
-                label.textContent = "Have you read this book? : "
-
-                let readOrNotContainer = document.createElement("div");
-                readOrNotContainer.classList.add("flexRow", "readOrNotContainer");
-
-                let readTrueLabel = document.createElement("label");
-                readTrueLabel.htmlFor = "readTrueLabel";
-                readTrueLabel.textContent = "Yes"
-                input.type = "radio";
-                input.value =  "true";
-                input.name = "readOrNot";
-                input.checked = true;
-
-                let input1 = document.createElement("input");
-                input1.classList.add("bookNewInput");
-
-                let readFalseLabel = document.createElement("label");
-                readFalseLabel.htmlFor = "readFalseLabel";
-                readFalseLabel.textContent = "No"
-                input1.type = "radio";
-                input1.value =  "false";
-                input1.name = "readOrNot";
-
-                inputContainer.appendChild(label);
-                readOrNotContainer.appendChild(input);
-                readOrNotContainer.appendChild(readTrueLabel);
-                readOrNotContainer.appendChild(input1);
-                readOrNotContainer.appendChild(readFalseLabel);
-                inputContainer.appendChild(readOrNotContainer);
-                formContainerFieldset.appendChild(inputContainer);
-
-            }
-
+        },
+        changeBook(){
 
         }
-        //3. create submit burron
-            let submitForm = document.createElement("button");
-            submitForm.id  = "submitButton";
-            submitForm.textContent = "Submit";
-
-        //Temporary Functions 
+    }
+    class CreateBook{
+        constructor(){
+            this.id = crypto.randomUUID();
+            this.title = document.querySelector("#bookTitle").value;
+            this.author = document.querySelector("#bookAuthor").value;
+            this.pages = document.querySelector("#bookPages").value;
+            this.read = document.querySelector('input[name="readOrNot"]:checked').value;
+        }
         
-            function bookRegister(bookID, bookNewInputs){
-                this.id = bookID;
-                this.name = bookNewInputs[0].value;
-                this.author = bookNewInputs[1].value;
-                this.pages = bookNewInputs[2].value;
-                let checkedRadio = document.querySelector('input[name="readOrNot"]:checked');
-                this.read = checkedRadio.value;
+        //add a method if hovered will display book details
+        bookHover(){
+            const bookDiv = document.querySelector("[data-id='" + this.id + "']");
+            if (bookDiv) {
+                bookDiv.addEventListener("mouseover", () => {
+                    let bookDetails = [
+                     ("Book ID: " + this.id),
+                     ("Book Title: " + this.title),
+                     ("Book Author: " + this.author),
+                     ("Book Pages: " + this.pages),
+                     ("Has been read?: " + this.read)
+                    ]
+                    UIMethods.bookHoverUI(bookDetails, bookDiv, this.id);
+                });
+                bookDiv.addEventListener("mouseout", () => {
+                    let detailsUI = document.querySelector("#details"+this.id);
+                    bookDiv.removeChild(detailsUI);
+                });
             }
-        //Temporary Events
-            //If Submit is clicked 
-            submitForm.addEventListener("click", (e) =>{
-                e.preventDefault();
-                let overlay = document.querySelector("#overlay");
-                let formContainer = document.querySelector("#formContainer")
-                let bookID = crypto.randomUUID();
-                let bookNewInputs = document.querySelectorAll(".bookNewInput");  
-                let newBook = new bookRegister(bookID, bookNewInputs);
-
-                libraryBook.push(newBook);
-
-                let libraryBookStyle  = document.createElement("div");
-                libraryBookStyle.dataset.id = bookID;
-                libraryBookStyle.classList.add("libraryBookStyle");
-                libraryBookStyle.style.backgroundColor = "rgb(" + Math.floor(Math.random() * 256) + 
-                "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")"; 
-                
-                libraryBooks.appendChild(libraryBookStyle);
-                body.removeChild(overlay);
-                body.removeChild(formContainer);
-                console.log(libraryBook);
+        }
+    
+        //setter getter
+    }
+    const action = {
+        events(){
+            DOMVariables.addBook.addEventListener("click", () =>{
+                UIMethods.overlay();
+                formMethods.createForm("Enter Book Details");
+                formMethods.createFormItems(["Title", "Author", "Pages"]);
+                formMethods.createRadioItems("Have you read this book?", ["true", "false"] );
+                formMethods.submitButton();
+                document.querySelector("#submitButton").addEventListener("click", (e)=>{
+                    e.preventDefault();
+                    let newBook = new CreateBook();
+                    libraryVariables.libraryBook.push(newBook);
+                    console.log(libraryVariables.libraryBook);
+                    UIMethods.bookToShelft(newBook);
+                    newBook.bookHover();
+                    console.log(CreateBook.prototype.bookHover);
+                    UIMethods.removeFormOverlay();
+                })
+                });
+            DOMVariables.removeBook.addEventListener("click", () =>{
+                UIMethods.overlay();
+                formMethods.createForm("Select Book to Remove:");
+                formMethods.createSelect("removeBook");
+                formMethods.submitButton();
+                document.querySelector("#submitButton").addEventListener("click", (e)=>{
+                    e.preventDefault();
+                    formMethods.deleteBook();
+                    UIMethods.removeBook();
+                    UIMethods.removeFormOverlay();
+                });
             });
+            DOMVariables.changeBook.addEventListener("click", () =>{
+                UIMethods.overlay();
+                formMethods.createForm("Select Book to Change:");
+                formMethods.createSelect("changeBook");
+                (document.querySelector("select[name='changeBook']")).addEventListener("change", ()=>{
+                    if (document.querySelector("#submitButton")){
+                        let button = document.querySelector("#submitButton");
+                        document.querySelector("#formContainerFieldset").removeChild(button);
+                    }
+                    formMethods.createRadioItems("Have you read this book?", ["true", "false"] );
+                    formMethods.submitButton();
+                    document.querySelector("#submitButton").addEventListener("click", (e)=>{
+                        e.preventDefault();
+                        let readOrNot = document.querySelector('input[name="readOrNot"]:checked').value;
+                        let selectedBook = document.querySelector("select[name='changeBook']").value;
+                        let index = libraryVariables.libraryBook.findIndex(obj => obj.id === selectedBook );
+                        libraryVariables.libraryBook[index].read = readOrNot;
 
-        //APPEND TO BODY
-        formContainerFieldset.appendChild(submitForm);
-        formContainer.appendChild(formContainerFieldset);
-        body.appendChild(formContainer);
+                        UIMethods.removeFormOverlay();
+                });
+                });                
+                console.log(libraryVariables.libraryBook);
+            });
+            
+            }
+            ///remove
+
+            ///change
 
     }
-    
+
+    action.events();
 
 
-}
 
-)();
+
+})();

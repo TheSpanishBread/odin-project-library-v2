@@ -158,6 +158,15 @@ select, option{
 .changeBookReadOrNotContainer{
     gap:1rem;
 }
+.hoverContainer{
+    padding:1rem;
+    position: relative;
+    top:1rem;
+    left:2rem;
+    background-color: white;
+    font-size: 0.8rem;
+    width: 30vw;
+}
 /*FOOTER */
 footer{
     font-weight: bold;
